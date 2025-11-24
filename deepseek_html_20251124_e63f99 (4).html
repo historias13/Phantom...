@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira • Maya</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Efeitos de Fundo Premium */
+        .premium-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(52, 199, 89, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(52, 199, 89, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(52, 199, 89, 0.08) 0%, transparent 50%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .animated-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 99%, rgba(52, 199, 89, 0.03) 100%) 50% 50% / 40px 40px,
+                linear-gradient(0deg, transparent 99%, rgba(52, 199, 89, 0.03) 100%) 50% 50% / 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        /* Barra de Status Premium */
+        .status-bar {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 14px 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 600;
+            backdrop-filter: blur(30px);
+            position: relative;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-icon {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cellular-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+        }
+
+        .cellular-bar {
+            width: 3px;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            border-radius: 1px;
+        }
+
+        .cellular-bar:nth-child(1) { height: 4px; }
+        .cellular-bar:nth-child(2) { height: 6px; }
+        .cellular-bar:nth-child(3) { height: 8px; }
+        .cellular-bar:nth-child(4) { height: 10px; }
+
+        .wifi-icon {
+            width: 16px;
+            height: 12px;
+            position: relative;
+        }
+
+        .wifi-symbol {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #34c759;
+            border-top: none;
+            border-right: none;
+            border-radius: 0 0 0 8px;
+            transform: rotate(-45deg);
+            position: absolute;
+            bottom: 0px;
+            left: 2px;
+        }
+
+        /* Cabeçalho Premium */
+        .account-header {
+            padding: 24px 20px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 430px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .account-badge {
+            background: linear-gradient(135deg, #34c759, #2eaa50, #28a745);
+            color: #000;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 8px 14px;
+            border-radius: 20px;
+            min-width: 40px;
+            text-align: center;
+            box-shadow: 
+                0 8px 32px rgba(52, 199, 89, 0.4),
+                0 2px 8px rgba(52, 199, 89, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .account-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.6),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .account-badge:hover::before {
+            left: 100%;
+        }
+
+        .account-name {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .account-name:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .verified-badge {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #000;
+            font-weight: 800;
+            box-shadow: 
+                0 4px 20px rgba(52, 199, 89, 0.5),
+                0 2px 8px rgba(52, 199, 89, 0.3);
+            animation: pulseGlow 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .verified-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 
+                0 6px 30px rgba(52, 199, 89, 0.7),
+                0 3px 12px rgba(52, 199, 89, 0.4);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 4px 20px rgba(52, 199, 89, 0.5),
+                    0 2px 8px rgba(52, 199, 89, 0.3);
+            }
+            50% {
+                box-shadow: 
+                    0 6px 30px rgba(52, 199, 89, 0.8),
+                    0 3px 15px rgba(52, 199, 89, 0.5);
+            }
+        }
+
+        /* Conteúdo Principal Premium */
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 0px 20px 120px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .container.blurred {
+            opacity: 0.7;
+            transform: scale(0.98);
+        }
+
+        .total-balance {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-top: 8px;
+        }
+
+        .total-amount {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            cursor: pointer;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 16px;
+            border-radius: 16px;
+        }
+
+        .total-amount:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .change {
+            font-size: 17px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(52, 199, 89, 0.3);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .change:hover {
+            background: rgba(52, 199, 89, 0.1);
+        }
+
+        /* Botões de Ação Premium */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 32px 0;
+            padding: 0 10px;
+        }
+
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 16px 8px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(52, 199, 89, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .action-button:hover .action-icon {
+            background: rgba(52, 199, 89, 0.15);
+            border-color: rgba(52, 199, 89, 0.3);
+            transform: scale(1.1);
+        }
+
+        .action-label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #ffffff;
+            white-space: nowrap;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(52, 199, 89, 0.4) 50%, 
+                transparent 100%);
+            margin: 32px 0;
+            position: relative;
+        }
+
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #34c759;
+            border-radius: 2px;
+        }
+
+        /* Assets Container Premium */
+        .assets-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: rgba(28, 28, 30, 0.7);
+            border-radius: 24px;
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .asset-row {
+            background: transparent;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .asset-row::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(52, 199, 89, 0.05),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .asset-row:hover::before {
+            left: 100%;
+        }
+
+        .asset-row:hover {
+            background: rgba(52, 199, 89, 0.03);
+            transform: translateX(4px);
+        }
+
+        .asset-row:last-child {
+            border-bottom: none;
+        }
+
+        .asset-main-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .asset-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .asset-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(52, 199, 89, 0.1);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .asset-value {
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            color: #ffffff;
+            text-align: right;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .asset-value:hover {
+            color: #34c759;
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .asset-details-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            color: #8e8e93;
+        }
+
+        .asset-amount {
+            cursor: pointer;
+            color: #8e8e93;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            padding: 6px 10px;
+            border-radius: 10px;
+        }
+
+        .asset-amount:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .asset-change {
+            color: #34c759;
+            font-weight: 600;
+            text-align: right;
+            font-size: 15px;
+            text-shadow: 0 2px 10px rgba(52, 199, 89, 0.3);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .asset-change:hover {
+            background: rgba(52, 199, 89, 0.1);
+        }
+
+        /* Barra de Navegação Inferior Premium */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 16px 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px 28px 0 0;
+            max-width: 430px;
+            width: 100%;
+            backdrop-filter: blur(40px);
+            z-index: 100;
+            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .nav-bar.blurred {
+            opacity: 0.7;
+            transform: translateX(-50%) scale(0.98);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: #8e8e93;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            position: relative;
+        }
+
+        .nav-item.active {
+            color: #34c759;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active .nav-icon {
+            background: linear-gradient(135deg, #34c759, #28a745);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
+        }
+
+        .nav-label {
+            font-weight: 600;
+            letter-spacing: -0.1px;
+        }
+
+        .nav-indicator {
+            position: absolute;
+            top: -8px;
+            width: 4px;
+            height: 4px;
+            background: #34c759;
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active .nav-indicator {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* Campo de Edição Premium */
+        .edit-input {
+            width: 100%;
+            border: 2px solid #34c759;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: inherit;
+            font-weight: inherit;
+            background: rgba(28, 28, 30, 0.9);
+            color: #ffffff;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.3);
+            border-color: #34c759;
+            background: rgba(28, 28, 30, 0.95);
+        }
+
+        /* Efeitos de Partículas */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #34c759;
+            border-radius: 50%;
+            animation: floatParticle 6s ease-in-out infinite;
+        }
+
+        @keyframes floatParticle {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            25%, 75% {
+                transform: translateY(-20px) translateX(10px);
+            }
+        }
+
+        /* Indicador de Edição */
+        .edit-indicator {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 6px;
+            height: 6px;
+            background: #34c759;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .editable:hover .edit-indicator {
+            opacity: 1;
+        }
+
+        /* Barra Lateral de Contas */
+        .accounts-sidebar {
+            position: fixed;
+            top: 0;
+            right: -380px;
+            width: 380px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(40px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            padding: 80px 24px 120px;
+            overflow-y: auto;
+            box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .accounts-sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-sidebar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+
+        .close-sidebar:hover {
+            background: rgba(52, 199, 89, 0.2);
+            transform: scale(1.1);
+        }
+
+        .account-card {
+            background: rgba(28, 28, 30, 0.7);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(52, 199, 89, 0.05),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .account-card:hover::before {
+            left: 100%;
+        }
+
+        .account-card:hover {
+            background: rgba(52, 199, 89, 0.05);
+            border-color: rgba(52, 199, 89, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .account-card.active {
+            background: rgba(52, 199, 89, 0.1);
+            border-color: rgba(52, 199, 89, 0.5);
+            box-shadow: 0 8px 32px rgba(52, 199, 89, 0.2);
+        }
+
+        .account-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .account-card-badge {
+            background: linear-gradient(135deg, #34c759, #28a745);
+            color: #000;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 6px 12px;
+            border-radius: 16px;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .account-card-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            flex: 1;
+            margin-left: 12px;
+        }
+
+        .account-card-balance {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .account-card-change {
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .add-account-card {
+            background: rgba(28, 28, 30, 0.5);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-account-card:hover {
+            background: rgba(52, 199, 89, 0.05);
+            border-color: rgba(52, 199, 89, 0.5);
+        }
+
+        .add-account-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(52, 199, 89, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #34c759;
+        }
+
+        .add-account-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #34c759;
+        }
+
+        /* Overlay para fechar a barra lateral */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Página do Navegador */
+        .browser-page {
+            display: none;
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px 20px 120px;
+        }
+
+        .browser-page.active {
+            display: block;
+        }
+
+        .browser-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .browser-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .browser-subtitle {
+            font-size: 16px;
+            color: #8e8e93;
+        }
+
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .grid-account-card {
+            background: rgba(28, 28, 30, 0.7);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(52, 199, 89, 0.05),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .grid-account-card:hover::before {
+            left: 100%;
+        }
+
+        .grid-account-card:hover {
+            background: rgba(52, 199, 89, 0.05);
+            border-color: rgba(52, 199, 89, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .grid-account-card.active {
+            background: rgba(52, 199, 89, 0.1);
+            border-color: rgba(52, 199, 89, 0.5);
+            box-shadow: 0 8px 32px rgba(52, 199, 89, 0.2);
+        }
+
+        .grid-account-badge {
+            background: linear-gradient(135deg, #34c759, #28a745);
+            color: #000;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 12px;
+            width: fit-content;
+            margin-bottom: 12px;
+        }
+
+        .grid-account-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .grid-account-balance {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .grid-account-change {
+            font-size: 14px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .total-summary {
+            background: rgba(28, 28, 30, 0.7);
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .total-summary-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .total-summary-amount {
+            font-size: 32px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .total-summary-change {
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Página do Histórico */
+        .history-page {
+            display: none;
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px 20px 120px;
+        }
+
+        .history-page.active {
+            display: block;
+        }
+
+        .history-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .history-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .history-subtitle {
+            font-size: 16px;
+            color: #8e8e93;
+        }
+
+        .history-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .history-filter {
+            background: rgba(28, 28, 30, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #8e8e93;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .history-filter.active {
+            background: rgba(52, 199, 89, 0.1);
+            border-color: rgba(52, 199, 89, 0.5);
+            color: #34c759;
+        }
+
+        .history-filter:hover {
+            background: rgba(52, 199, 89, 0.05);
+        }
+
+        .transactions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .transaction-group {
+            background: rgba(28, 28, 30, 0.7);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .transaction-group-header {
+            padding: 16px 20px;
+            background: rgba(52, 199, 89, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 700;
+            color: #34c759;
+        }
+
+        .transaction-item {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: rgba(52, 199, 89, 0.03);
+        }
+
+        .transaction-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .transaction-icon.receive {
+            background: rgba(52, 199, 89, 0.15);
+            color: #34c759;
+        }
+
+        .transaction-icon.send {
+            background: rgba(255, 59, 48, 0.15);
+            color: #ff3b30;
+        }
+
+        .transaction-icon.swap {
+            background: rgba(0, 122, 255, 0.15);
+            color: #007aff;
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-type {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .transaction-meta {
+            font-size: 14px;
+            color: #8e8e93;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .transaction-account {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34c759;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .transaction-crypto {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .transaction-fiat {
+            font-size: 14px;
+            color: #8e8e93;
+        }
+
+        .transaction-positive {
+            color: #34c759;
+        }
+
+        .transaction-negative {
+            color: #ff3b30;
+        }
+
+        .transaction-neutral {
+            color: #8e8e93;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e93;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtext {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* Página de Trocar */
+        .swap-page {
+            display: none;
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px 20px 120px;
+        }
+
+        .swap-page.active {
+            display: block;
+        }
+
+        .swap-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .swap-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .swap-subtitle {
+            font-size: 16px;
+            color: #8e8e93;
+        }
+
+        .swap-container {
+            background: rgba(28, 28, 30, 0.7);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .swap-from, .swap-to {
+            margin-bottom: 24px;
+        }
+
+        .swap-label {
+            font-size: 14px;
+            color: #8e8e93;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .swap-input-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .swap-amount {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 18px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .swap-amount:focus {
+            outline: none;
+            border-color: #34c759;
+        }
+
+        .swap-select {
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            color: #34c759;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .swap-arrow {
+            text-align: center;
+            margin: 16px 0;
+            font-size: 24px;
+            color: #34c759;
+        }
+
+        .swap-details {
+            background: rgba(52, 199, 89, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .swap-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .swap-detail-label {
+            color: #8e8e93;
+            font-size: 14px;
+        }
+
+        .swap-detail-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .swap-button {
+            width: 100%;
+            background: linear-gradient(135deg, #34c759, #28a745);
+            border: none;
+            border-radius: 20px;
+            padding: 18px;
+            color: #000;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .swap-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 199, 89, 0.4);
+        }
+
+        .swap-button:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #8e8e93;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Página de Configurações */
+        .settings-page {
+            display: none;
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px 20px 120px;
+        }
+
+        .settings-page.active {
+            display: block;
+        }
+
+        .settings-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .settings-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .settings-subtitle {
+            font-size: 16px;
+            color: #8e8e93;
+        }
+
+        .settings-section {
+            background: rgba(28, 28, 30, 0.7);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:hover {
+            background: rgba(52, 199, 89, 0.03);
+            margin: 0 -20px;
+            padding: 16px 20px;
+        }
+
+        .settings-item-info {
+            flex: 1;
+        }
+
+        .settings-item-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+
+        .settings-item-description {
+            font-size: 14px;
+            color: #8e8e93;
+        }
+
+        .settings-item-value {
+            color: #34c759;
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 32px;
+        }
+
+        .toggle-checkbox {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-checkbox:checked + .toggle-slider {
+            background-color: #34c759;
+        }
+
+        .toggle-checkbox:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .settings-danger {
+            border-color: rgba(255, 59, 48, 0.3);
+        }
+
+        .settings-danger .settings-item {
+            color: #ff3b30;
+        }
+
+        .settings-danger .settings-item:hover {
+            background: rgba(255, 59, 48, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Efeitos de Fundo Premium -->
+    <div class="premium-bg"></div>
+    <div class="animated-grid"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Overlay para fechar a barra lateral -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Barra Lateral de Contas -->
+    <div class="accounts-sidebar" id="accountsSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">Suas Carteiras</div>
+            <div class="close-sidebar" id="closeSidebar">✕</div>
+        </div>
+        
+        <div class="account-card active" data-account="1">
+            <div class="account-card-header">
+                <div class="account-card-badge">C1</div>
+                <div class="account-card-name">Carteira Principal</div>
+            </div>
+            <div class="account-card-balance">R$ 503.372,32</div>
+            <div class="account-card-change">+R$ 495.119,02 +5999,05%</div>
+        </div>
+        
+        <div class="account-card" data-account="2">
+            <div class="account-card-header">
+                <div class="account-card-badge">C2</div>
+                <div class="account-card-name">Carteira Investimentos</div>
+            </div>
+            <div class="account-card-balance">R$ 127.845,18</div>
+            <div class="account-card-change">+R$ 12.345,67 +10,70%</div>
+        </div>
+        
+        <div class="account-card" data-account="3">
+            <div class="account-card-header">
+                <div class="account-card-badge">C3</div>
+                <div class="account-card-name">Carteira Poupança</div>
+            </div>
+            <div class="account-card-balance">R$ 45.290,75</div>
+            <div class="account-card-change">+R$ 2.150,30 +4,99%</div>
+        </div>
+        
+        <div class="account-card" data-account="4">
+            <div class="account-card-header">
+                <div class="account-card-badge">C4</div>
+                <div class="account-card-name">Carteira Trading</div>
+            </div>
+            <div class="account-card-balance">R$ 89.123,45</div>
+            <div class="account-card-change">+R$ 5.678,90 +6,81%</div>
+        </div>
+        
+        <div class="account-card" data-account="5">
+            <div class="account-card-header">
+                <div class="account-card-badge">C5</div>
+                <div class="account-card-name">Carteira Família</div>
+            </div>
+            <div class="account-card-balance">R$ 234.567,89</div>
+            <div class="account-card-change">+R$ 15.432,10 +7,03%</div>
+        </div>
+        
+        <div class="add-account-card" id="addAccountCard">
+            <div class="add-account-icon">+</div>
+            <div class="add-account-text">Adicionar Nova Carteira</div>
+        </div>
+    </div>
+
+    <!-- Barra de Status Premium -->
+    <div class="status-bar">
+        <div class="status-left">
+            <div class="status-icon">
+                <div class="cellular-bars">
+                    <div class="cellular-bar"></div>
+                    <div class="cellular-bar"></div>
+                    <div class="cellular-bar"></div>
+                    <div class="cellular-bar"></div>
+                </div>
+            </div>
+            <div class="wifi-icon">
+                <div class="wifi-symbol"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Página da Carteira -->
+    <div class="container" id="walletPage">
+        <!-- Cabeçalho Premium -->
+        <div class="account-header">
+            <div class="account-badge" id="accountBadge">C1</div>
+            <div class="account-name editable" id="accountName">
+                Carteira Principal
+                <div class="edit-indicator"></div>
+            </div>
+            <div class="verified-badge">✓</div>
+        </div>
+
+        <div class="total-balance">
+            <div class="total-amount editable" id="totalAmount">
+                R$ 503.372,32
+                <div class="edit-indicator"></div>
+            </div>
+            <div class="change editable" id="totalChange">
+                +R$ 495.119,02 +5999,05%
+                <div class="edit-indicator"></div>
+            </div>
+        </div>
+        
+        <!-- Botões de Ação Premium -->
+        <div class="action-buttons">
+            <button class="action-button">
+                <div class="action-icon">↓</div>
+                <div class="action-label">Receber</div>
+            </button>
+            <button class="action-button">
+                <div class="action-icon">↑</div>
+                <div class="action-label">Enviar</div>
+            </button>
+            <button class="action-button">
+                <div class="action-icon">⇄</div>
+                <div class="action-label">Trocar</div>
+            </button>
+            <button class="action-button">
+                <div class="action-icon">+</div>
+                <div class="action-label">Comprar</div>
+            </button>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <!-- Assets Container Premium -->
+        <div class="assets-container">
+            <div class="asset-row">
+                <div class="asset-main-row">
+                    <div class="asset-name">
+                        <div class="asset-icon">M</div>
+                        Maya
+                    </div>
+                    <div class="asset-value editable" id="mayaValue">
+                        R$ 503.310,14
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+                <div class="asset-details-row">
+                    <div class="asset-amount editable" id="mayaAmount">
+                        548.242,90262 MAYA
+                        <div class="edit-indicator"></div>
+                    </div>
+                    <div class="asset-change editable" id="mayaChange">
+                        +R$ 495.066,85
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-row">
+                <div class="asset-main-row">
+                    <div class="asset-name">
+                        <div class="asset-icon">F</div>
+                        ferg
+                    </div>
+                    <div class="asset-value editable" id="fergValue">
+                        R$ 58,91
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+                <div class="asset-details-row">
+                    <div class="asset-amount editable" id="fergAmount">
+                        19.527,15082 FERG
+                        <div class="edit-indicator"></div>
+                    </div>
+                    <div class="asset-change editable" id="fergChange">
+                        +R$ 51,92
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-row">
+                <div class="asset-main-row">
+                    <div class="asset-name">
+                        <div class="asset-icon">S</div>
+                        Solana
+                    </div>
+                    <div class="asset-value editable" id="solanaValue">
+                        R$ 3,26
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+                <div class="asset-details-row">
+                    <div class="asset-amount editable" id="solanaAmount">
+                        0,01394 SOL
+                        <div class="edit-indicator"></div>
+                    </div>
+                    <div class="asset-change editable" id="solanaChange">
+                        +R$ 0,25
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-row">
+                <div class="asset-main-row">
+                    <div class="asset-name">
+                        <div class="asset-icon">E</div>
+                        Ethereum
+                    </div>
+                    <div class="asset-value editable" id="ethereumValue">
+                        R$ 0,00
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+                <div class="asset-details-row">
+                    <div class="asset-amount editable" id="ethereumAmount">
+                        0 ETH
+                        <div class="edit-indicator"></div>
+                    </div>
+                    <div class="asset-change editable" id="ethereumChange">
+                        R$ 0,00
+                        <div class="edit-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Página do Navegador -->
+    <div class="browser-page" id="browserPage">
+        <div class="browser-header">
+            <div class="browser-title">Todas as Carteiras</div>
+            <div class="browser-subtitle">Gerencie todas as suas carteiras em um só lugar</div>
+        </div>
+
+        <div class="accounts-grid" id="accountsGrid">
+            <!-- As carteiras serão carregadas dinamicamente aqui -->
+        </div>
+
+        <div class="total-summary">
+            <div class="total-summary-title">Saldo Total Consolidado</div>
+            <div class="total-summary-amount" id="totalConsolidated">R$ 1.000.199,59</div>
+            <div class="total-summary-change" id="totalConsolidatedChange">+R$ 530.726,09 +113,15%</div>
+        </div>
+    </div>
+
+    <!-- Página do Histórico -->
+    <div class="history-page" id="historyPage">
+        <div class="history-header">
+            <div class="history-title">Histórico</div>
+            <div class="history-subtitle">Todas as transações das suas carteiras</div>
+        </div>
+
+        <div class="history-filters">
+            <div class="history-filter active" data-filter="all">Todas</div>
+            <div class="history-filter" data-filter="receive">Recebimentos</div>
+            <div class="history-filter" data-filter="send">Envios</div>
+            <div class="history-filter" data-filter="swap">Trocas</div>
+            <div class="history-filter" data-filter="maya">Maya</div>
+            <div class="history-filter" data-filter="ferg">Ferg</div>
+            <div class="history-filter" data-filter="solana">Solana</div>
+        </div>
+
+        <div class="transactions-container" id="transactionsContainer">
+            <!-- As transações serão carregadas dinamicamente aqui -->
+        </div>
+    </div>
+
+    <!-- Página de Trocar -->
+    <div class="swap-page" id="swapPage">
+        <div class="swap-header">
+            <div class="swap-title">Trocar Criptomoedas</div>
+            <div class="swap-subtitle">Troque entre diferentes criptomoedas instantaneamente</div>
+        </div>
+
+        <div class="swap-container">
+            <div class="swap-from">
+                <div class="swap-label">De</div>
+                <div class="swap-input-group">
+                    <input type="number" class="swap-amount" id="fromAmount" placeholder="0.00" value="100">
+                    <select class="swap-select" id="fromCurrency">
+                        <option value="MAYA">MAYA</option>
+                        <option value="FERG">FERG</option>
+                        <option value="SOL">SOL</option>
+                        <option value="ETH">ETH</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="swap-arrow">⇅</div>
+
+            <div class="swap-to">
+                <div class="swap-label">Para</div>
+                <div class="swap-input-group">
+                    <input type="number" class="swap-amount" id="toAmount" placeholder="0.00" readonly>
+                    <select class="swap-select" id="toCurrency">
+                        <option value="FERG">FERG</option>
+                        <option value="MAYA">MAYA</option>
+                        <option value="SOL">SOL</option>
+                        <option value="ETH">ETH</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="swap-details">
+            <div class="swap-detail-row">
+                <div class="swap-detail-label">Taxa de Rede</div>
+                <div class="swap-detail-value">R$ 2,50</div>
+            </div>
+            <div class="swap-detail-row">
+                <div class="swap-detail-label">Taxa da Plataforma</div>
+                <div class="swap-detail-value">0.25%</div>
+            </div>
+            <div class="swap-detail-row">
+                <div class="swap-detail-label">Taxa Total</div>
+                <div class="swap-detail-value">R$ 5,75</div>
+            </div>
+            <div class="swap-detail-row">
+                <div class="swap-detail-label">Taxa de Câmbio</div>
+                <div class="swap-detail-value">1 MAYA = 3.45 FERG</div>
+            </div>
+        </div>
+
+        <button class="swap-button" id="confirmSwap">Confirmar Troca</button>
+    </div>
+
+    <!-- Página de Configurações -->
+    <div class="settings-page" id="settingsPage">
+        <div class="settings-header">
+            <div class="settings-title">Configurações</div>
+            <div class="settings-subtitle">Personalize sua experiência na carteira</div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Conta</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Nome de Usuário</div>
+                    <div class="settings-item-description">@maya_user123</div>
+                </div>
+                <div class="settings-item-value">Editar</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Email</div>
+                    <div class="settings-item-description">usuario@email.com</div>
+                </div>
+                <div class="settings-item-value">Verificado</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Backup da Carteira</div>
+                    <div class="settings-item-description">Último backup: 15/01/2024</div>
+                </div>
+                <div class="settings-item-value">Fazer Backup</div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Preferências</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Moeda Principal</div>
+                    <div class="settings-item-description">Real Brasileiro (BRL)</div>
+                </div>
+                <div class="settings-item-value">Alterar</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Idioma</div>
+                    <div class="settings-item-description">Português (Brasil)</div>
+                </div>
+                <div class="settings-item-value">Alterar</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Notificações por Push</div>
+                    <div class="settings-item-description">Receber notificações de transações</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" class="toggle-checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Biometria</div>
+                    <div class="settings-item-description">Usar Face ID/Touch ID</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" class="toggle-checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Privacidade & Segurança</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Alterar PIN</div>
+                    <div class="settings-item-description">Atualizar código de acesso</div>
+                </div>
+                <div class="settings-item-value">Alterar</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Registro de Atividade</div>
+                    <div class="settings-item-description">Manter histórico de login</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" class="toggle-checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Autenticação 2 Fatores</div>
+                    <div class="settings-item-description">Proteção adicional para sua conta</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" class="toggle-checkbox">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section settings-danger">
+            <div class="settings-section-title">Zona de Perigo</div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Exportar Chaves Privadas</div>
+                    <div class="settings-item-description">Faça backup das suas chaves</div>
+                </div>
+                <div class="settings-item-value" style="color: #ff3b30;">Exportar</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Limpar Cache</div>
+                    <div class="settings-item-description">Remover dados temporários</div>
+                </div>
+                <div class="settings-item-value" style="color: #ff3b30;">Limpar</div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-info">
+                    <div class="settings-item-label">Excluir Conta</div>
+                    <div class="settings-item-description">Esta ação não pode ser desfeita</div>
+                </div>
+                <div class="settings-item-value" style="color: #ff3b30;">Excluir</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Navegação Inferior Premium -->
+    <div class="nav-bar" id="navBar">
+        <div class="nav-item active" data-page="wallet">
+            <div class="nav-indicator"></div>
+            <div class="nav-icon">􀎞</div>
+            <div class="nav-label">Carteira</div>
+        </div>
+        <div class="nav-item" data-page="browser">
+            <div class="nav-indicator"></div>
+            <div class="nav-icon">􀥋</div>
+            <div class="nav-label">Navegador</div>
+        </div>
+        <div class="nav-item" data-page="history">
+            <div class="nav-indicator"></div>
+            <div class="nav-icon">􀉉</div>
+            <div class="nav-label">Histórico</div>
+        </div>
+        <div class="nav-item" data-page="swap">
+            <div class="nav-indicator"></div>
+            <div class="nav-icon">􀣽</div>
+            <div class="nav-label">Trocar</div>
+        </div>
+        <div class="nav-item" data-page="settings">
+            <div class="nav-indicator"></div>
+            <div class="nav-icon">􀣌</div>
+            <div class="nav-label">Configurações</div>
+        </div>
+    </div>
+
+    <script>
+        // Dados das carteiras
+        const accountsData = {
+            1: {
+                badge: "C1",
+                name: "Carteira Principal",
+                balance: "R$ 503.372,32",
+                change: "+R$ 495.119,02 +5999,05%",
+                assets: {
+                    maya: { value: "R$ 503.310,14", amount: "548.242,90262 MAYA", change: "+R$ 495.066,85" },
+                    ferg: { value: "R$ 58,91", amount: "19.527,15082 FERG", change: "+R$ 51,92" },
+                    solana: { value: "R$ 3,26", amount: "0,01394 SOL", change: "+R$ 0,25" },
+                    ethereum: { value: "R$ 0,00", amount: "0 ETH", change: "R$ 0,00" }
+                }
+            },
+            2: {
+                badge: "C2",
+                name: "Carteira Investimentos",
+                balance: "R$ 127.845,18",
+                change: "+R$ 12.345,67 +10,70%",
+                assets: {
+                    maya: { value: "R$ 85.123,45", amount: "92.678,90123 MAYA", change: "+R$ 8.123,45" },
+                    ferg: { value: "R$ 32.456,78", amount: "10.789,01234 FERG", change: "+R$ 3.456,78" },
+                    solana: { value: "R$ 8.765,43", amount: "37,45678 SOL", change: "+R$ 765,43" },
+                    ethereum: { value: "R$ 1.499,52", amount: "0,4231 ETH", change: "+R$ 0,01" }
+                }
+            },
+            3: {
+                badge: "C3",
+                name: "Carteira Poupança",
+                balance: "R$ 45.290,75",
+                change: "+R$ 2.150,30 +4,99%",
+                assets: {
+                    maya: { value: "R$ 35.678,90", amount: "38.901,23456 MAYA", change: "+R$ 1.678,90" },
+                    ferg: { value: "R$ 7.890,12", amount: "2.619,98765 FERG", change: "+R$ 390,12" },
+                    solana: { value: "R$ 1.721,73", amount: "7,34567 SOL", change: "+R$ 81,28" },
+                    ethereum: { value: "R$ 0,00", amount: "0 ETH", change: "R$ 0,00" }
+                }
+            },
+            4: {
+                badge: "C4",
+                name: "Carteira Trading",
+                balance: "R$ 89.123,45",
+                change: "+R$ 5.678,90 +6,81%",
+                assets: {
+                    maya: { value: "R$ 45.678,90", amount: "49.753,08642 MAYA", change: "+R$ 2.678,90" },
+                    ferg: { value: "R$ 23.456,78", amount: "7.777,88899 FERG", change: "+R$ 1.456,78" },
+                    solana: { value: "R$ 15.987,65", amount: "68,43210 SOL", change: "+R$ 987,65" },
+                    ethereum: { value: "R$ 4.000,12", amount: "1,12987 ETH", change: "+R$ 555,57" }
+                }
+            },
+            5: {
+                badge: "C5",
+                name: "Carteira Família",
+                balance: "R$ 234.567,89",
+                change: "+R$ 15.432,10 +7,03%",
+                assets: {
+                    maya: { value: "R$ 150.000,00", amount: "163.398,69281 MAYA", change: "+R$ 12.000,00" },
+                    ferg: { value: "R$ 64.567,89", amount: "21.400,00000 FERG", change: "+R$ 2.567,89" },
+                    solana: { value: "R$ 15.000,00", amount: "64,10256 SOL", change: "+R$ 700,00" },
+                    ethereum: { value: "R$ 5.000,00", amount: "1,41000 ETH", change: "+R$ 164,21" }
+                }
+            }
+        };
+
+        // Dados das transações
+        const transactionsData = [
+            // Carteira 1 - Principal
+            { id: 1, account: 1, type: "receive", crypto: "MAYA", amount: "+50.000 MAYA", fiat: "+R$ 45.890,00", date: "2024-01-15", time: "14:30", accountName: "C1 - Principal" },
+            { id: 2, account: 1, type: "send", crypto: "MAYA", amount: "-5.000 MAYA", fiat: "-R$ 4.589,00", date: "2024-01-14", time: "09:15", accountName: "C1 - Principal" },
+            { id: 3, account: 1, type: "swap", crypto: "FERG", amount: "+10.000 FERG", fiat: "Troca por MAYA", date: "2024-01-13", time: "16:45", accountName: "C1 - Principal" },
+            { id: 4, account: 1, type: "receive", crypto: "SOL", amount: "+1.5 SOL", fiat: "+R$ 675,00", date: "2024-01-12", time: "11:20", accountName: "C1 - Principal" },
+            
+            // Carteira 2 - Investimentos
+            { id: 5, account: 2, type: "receive", crypto: "MAYA", amount: "+25.000 MAYA", fiat: "+R$ 22.945,00", date: "2024-01-15", time: "10:30", accountName: "C2 - Investimentos" },
+            { id: 6, account: 2, type: "send", crypto: "FERG", amount: "-2.000 FERG", fiat: "-R$ 918,00", date: "2024-01-14", time: "15:20", accountName: "C2 - Investimentos" },
+            { id: 7, account: 2, type: "swap", crypto: "ETH", amount: "+0.5 ETH", fiat: "Troca por FERG", date: "2024-01-13", time: "13:10", accountName: "C2 - Investimentos" },
+            
+            // Carteira 3 - Poupança
+            { id: 8, account: 3, type: "receive", crypto: "MAYA", amount: "+15.000 MAYA", fiat: "+R$ 13.767,00", date: "2024-01-14", time: "08:45", accountName: "C3 - Poupança" },
+            { id: 9, account: 3, type: "receive", crypto: "FERG", amount: "+5.000 FERG", fiat: "+R$ 2.295,00", date: "2024-01-13", time: "17:30", accountName: "C3 - Poupança" },
+            
+            // Carteira 4 - Trading
+            { id: 10, account: 4, type: "send", crypto: "MAYA", amount: "-8.000 MAYA", fiat: "-R$ 7.342,40", date: "2024-01-15", time: "12:15", accountName: "C4 - Trading" },
+            { id: 11, account: 4, type: "receive", crypto: "SOL", amount: "+25 SOL", fiat: "+R$ 11.250,00", date: "2024-01-14", time: "19:40", accountName: "C4 - Trading" },
+            { id: 12, account: 4, type: "swap", crypto: "FERG", amount: "-15.000 FERG", fiat: "Troca por SOL", date: "2024-01-13", time: "14:25", accountName: "C4 - Trading" },
+            
+            // Carteira 5 - Família
+            { id: 13, account: 5, type: "receive", crypto: "MAYA", amount: "+75.000 MAYA", fiat: "+R$ 68.835,00", date: "2024-01-12", time: "16:00", accountName: "C5 - Família" },
+            { id: 14, account: 5, type: "send", crypto: "ETH", amount: "-0.8 ETH", fiat: "-R$ 14.000,00", date: "2024-01-11", time: "10:10", accountName: "C5 - Família" },
+            { id: 15, account: 5, type: "receive", crypto: "FERG", amount: "+30.000 FERG", fiat: "+R$ 13.770,00", date: "2024-01-10", time: "21:15", accountName: "C5 - Família" }
+        ];
+
+        // Taxas de câmbio
+        const exchangeRates = {
+            MAYA: { FERG: 3.45, SOL: 0.0025, ETH: 0.00015 },
+            FERG: { MAYA: 0.29, SOL: 0.00072, ETH: 0.000043 },
+            SOL: { MAYA: 400, FERG: 1380, ETH: 0.06 },
+            ETH: { MAYA: 6666.67, FERG: 23000, SOL: 16.67 }
+        };
+
+        let currentAccount = 1;
+        let currentPage = 'wallet';
+        let currentFilter = 'all';
+
+        // Criar partículas animadas
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Posição aleatória
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 6;
+                const duration = 4 + Math.random() * 4;
+                
+                particle.style.left = `${left}%`;
+                particle.style.top = `${top}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Inicializar partículas
+        createParticles();
+        
+        // Função para tornar um elemento editável
+        function makeEditable(elementId) {
+            const element = document.getElementById(elementId);
+            
+            element.addEventListener('click', function(e) {
+                // Evitar que o evento se propague para elementos pais
+                e.stopPropagation();
+                
+                const currentValue = this.textContent.trim();
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.className = 'edit-input';
+                
+                // Substituir o elemento pelo input
+                this.parentNode.replaceChild(input, this);
+                input.focus();
+                
+                // Selecionar todo o texto no input
+                input.select();
+                
+                // Quando o input perder foco, voltar ao texto normal
+                input.addEventListener('blur', function() {
+                    const newValue = this.value || currentValue;
+                    const newElement = document.createElement('div');
+                    newElement.id = elementId;
+                    newElement.className = element.className;
+                    newElement.innerHTML = newValue + '<div class="edit-indicator"></div>';
+                    
+                    // Substituir o input pelo novo elemento
+                    this.parentNode.replaceChild(newElement, this);
+                    
+                    // Adicionar novamente o evento de clique
+                    makeEditable(elementId);
+                });
+                
+                // Permitir salvar com Enter
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        this.blur();
+                    }
+                });
+            });
+        }
+        
+        // Tornar todos os valores editáveis
+        makeEditable('accountName');
+        makeEditable('totalAmount');
+        makeEditable('totalChange');
+        makeEditable('mayaValue');
+        makeEditable('mayaAmount');
+        makeEditable('mayaChange');
+        makeEditable('fergValue');
+        makeEditable('fergAmount');
+        makeEditable('fergChange');
+        makeEditable('solanaValue');
+        makeEditable('solanaAmount');
+        makeEditable('solanaChange');
+        makeEditable('ethereumValue');
+        makeEditable('ethereumAmount');
+        makeEditable('ethereumChange');
+        
+        // Adicionar interação aos itens da navegação
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const page = this.getAttribute('data-page');
+                
+                if (page) {
+                    // Atualizar navegação
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Trocar de página
+                    switchPage(page);
+                }
+            });
+        });
+
+        // Adicionar funcionalidade aos botões de ação
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const action = this.querySelector('.action-label').textContent;
+                
+                // Efeito visual de clique
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+                
+                // Simular ação (pode ser substituído por funcionalidade real)
+                console.log(`Ação "${action}" selecionada`);
+            });
+        });
+
+        // Permitir edição do badge da conta
+        document.getElementById('accountBadge').addEventListener('click', function() {
+            const currentValue = this.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentValue;
+            input.className = 'edit-input';
+            input.style.width = '60px';
+            input.style.textAlign = 'center';
+            
+            // Substituir o elemento pelo input
+            this.parentNode.replaceChild(input, this);
+            input.focus();
+            
+            // Selecionar todo o texto no input
+            input.select();
+            
+            // Quando o input perder foco, voltar ao texto normal
+            input.addEventListener('blur', function() {
+                const newValue = this.value || currentValue;
+                const newElement = document.createElement('div');
+                newElement.id = 'accountBadge';
+                newElement.className = 'account-badge';
+                newElement.textContent = newValue;
+                
+                // Substituir o input pelo novo elemento
+                this.parentNode.replaceChild(newElement, this);
+                
+                // Adicionar novamente o evento de clique
+                newElement.addEventListener('click', arguments.callee.caller);
+            });
+            
+            // Permitir salvar com Enter
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    this.blur();
+                }
+            });
+        });
+
+        // Funções para a barra lateral de contas
+        function openAccountsSidebar() {
+            document.getElementById('accountsSidebar').classList.add('active');
+            document.getElementById('sidebarOverlay').classList.add('active');
+            document.getElementById('walletPage').classList.add('blurred');
+            document.getElementById('navBar').classList.add('blurred');
+        }
+
+        function closeAccountsSidebar() {
+            document.getElementById('accountsSidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.getElementById('walletPage').classList.remove('blurred');
+            document.getElementById('navBar').classList.remove('blurred');
+        }
+
+        // Abrir barra lateral ao clicar no badge da conta
+        document.getElementById('accountBadge').addEventListener('click', openAccountsSidebar);
+
+        // Fechar barra lateral
+        document.getElementById('closeSidebar').addEventListener('click', closeAccountsSidebar);
+        document.getElementById('sidebarOverlay').addEventListener('click', closeAccountsSidebar);
+
+        // Trocar de conta
+        document.querySelectorAll('.account-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const accountId = this.getAttribute('data-account');
+                
+                if (accountId && accountId !== currentAccount.toString()) {
+                    // Atualizar a conta ativa na barra lateral
+                    document.querySelectorAll('.account-card').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Carregar dados da nova conta
+                    loadAccountData(parseInt(accountId));
+                    closeAccountsSidebar();
+                }
+            });
+        });
+
+        // Função para carregar dados da conta
+        function loadAccountData(accountId) {
+            const account = accountsData[accountId];
+            if (!account) return;
+            
+            currentAccount = accountId;
+            
+            // Atualizar cabeçalho
+            document.getElementById('accountBadge').textContent = account.badge;
+            document.getElementById('accountName').innerHTML = account.name + '<div class="edit-indicator"></div>';
+            
+            // Atualizar saldo total
+            document.getElementById('totalAmount').innerHTML = account.balance + '<div class="edit-indicator"></div>';
+            document.getElementById('totalChange').innerHTML = account.change + '<div class="edit-indicator"></div>';
+            
+            // Atualizar ativos
+            document.getElementById('mayaValue').innerHTML = account.assets.maya.value + '<div class="edit-indicator"></div>';
+            document.getElementById('mayaAmount').innerHTML = account.assets.maya.amount + '<div class="edit-indicator"></div>';
+            document.getElementById('mayaChange').innerHTML = account.assets.maya.change + '<div class="edit-indicator"></div>';
+            
+            document.getElementById('fergValue').innerHTML = account.assets.ferg.value + '<div class="edit-indicator"></div>';
+            document.getElementById('fergAmount').innerHTML = account.assets.ferg.amount + '<div class="edit-indicator"></div>';
+            document.getElementById('fergChange').innerHTML = account.assets.ferg.change + '<div class="edit-indicator"></div>';
+            
+            document.getElementById('solanaValue').innerHTML = account.assets.solana.value + '<div class="edit-indicator"></div>';
+            document.getElementById('solanaAmount').innerHTML = account.assets.solana.amount + '<div class="edit-indicator"></div>';
+            document.getElementById('solanaChange').innerHTML = account.assets.solana.change + '<div class="edit-indicator"></div>';
+            
+            document.getElementById('ethereumValue').innerHTML = account.assets.ethereum.value + '<div class="edit-indicator"></div>';
+            document.getElementById('ethereumAmount').innerHTML = account.assets.ethereum.amount + '<div class="edit-indicator"></div>';
+            document.getElementById('ethereumChange').innerHTML = account.assets.ethereum.change + '<div class="edit-indicator"></div>';
+            
+            // Reaplicar eventos de edição
+            makeEditable('accountName');
+            makeEditable('totalAmount');
+            makeEditable('totalChange');
+            makeEditable('mayaValue');
+            makeEditable('mayaAmount');
+            makeEditable('mayaChange');
+            makeEditable('fergValue');
+            makeEditable('fergAmount');
+            makeEditable('fergChange');
+            makeEditable('solanaValue');
+            makeEditable('solanaAmount');
+            makeEditable('solanaChange');
+            makeEditable('ethereumValue');
+            makeEditable('ethereumAmount');
+            makeEditable('ethereumChange');
+        }
+
+        // Adicionar nova conta
+        document.getElementById('addAccountCard').addEventListener('click', function() {
+            alert('Funcionalidade de adicionar nova carteira será implementada em breve!');
+        });
+
+        // Função para trocar de página
+        function switchPage(page) {
+            currentPage = page;
+            
+            // Esconder todas as páginas
+            document.getElementById('walletPage').style.display = 'none';
+            document.getElementById('browserPage').style.display = 'none';
+            document.getElementById('historyPage').style.display = 'none';
+            document.getElementById('swapPage').style.display = 'none';
+            document.getElementById('settingsPage').style.display = 'none';
+            
+            // Mostrar a página ativa
+            if (page === 'wallet') {
+                document.getElementById('walletPage').style.display = 'block';
+            } else if (page === 'browser') {
+                document.getElementById('browserPage').style.display = 'block';
+                loadBrowserPage();
+            } else if (page === 'history') {
+                document.getElementById('historyPage').style.display = 'block';
+                loadHistoryPage();
+            } else if (page === 'swap') {
+                document.getElementById('swapPage').style.display = 'block';
+                loadSwapPage();
+            } else if (page === 'settings') {
+                document.getElementById('settingsPage').style.display = 'block';
+                loadSettingsPage();
+            }
+        }
+
+        // Carregar página do navegador
+        function loadBrowserPage() {
+            const accountsGrid = document.getElementById('accountsGrid');
+            accountsGrid.innerHTML = '';
+            
+            // Adicionar todas as carteiras ao grid
+            Object.keys(accountsData).forEach(accountId => {
+                const account = accountsData[accountId];
+                const isActive = parseInt(accountId) === currentAccount;
+                
+                const accountCard = document.createElement('div');
+                accountCard.className = `grid-account-card ${isActive ? 'active' : ''}`;
+                accountCard.setAttribute('data-account', accountId);
+                
+                accountCard.innerHTML = `
+                    <div class="grid-account-badge">${account.badge}</div>
+                    <div class="grid-account-name">${account.name}</div>
+                    <div class="grid-account-balance">${account.balance}</div>
+                    <div class="grid-account-change">${account.change}</div>
+                `;
+                
+                accountCard.addEventListener('click', function() {
+                    const accountId = this.getAttribute('data-account');
+                    loadAccountData(parseInt(accountId));
+                    switchPage('wallet');
+                    
+                    // Atualizar navegação
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    document.querySelector('.nav-item[data-page="wallet"]').classList.add('active');
+                });
+                
+                accountsGrid.appendChild(accountCard);
+            });
+        }
+
+        // Carregar página do histórico
+        function loadHistoryPage() {
+            const transactionsContainer = document.getElementById('transactionsContainer');
+            transactionsContainer.innerHTML = '';
+            
+            // Filtrar transações
+            let filteredTransactions = transactionsData;
+            
+            if (currentFilter !== 'all') {
+                if (['receive', 'send', 'swap'].includes(currentFilter)) {
+                    filteredTransactions = transactionsData.filter(t => t.type === currentFilter);
+                } else {
+                    filteredTransactions = transactionsData.filter(t => t.crypto.toLowerCase().includes(currentFilter));
+                }
+            }
+            
+            // Agrupar transações por data
+            const groupedTransactions = {};
+            filteredTransactions.forEach(transaction => {
+                if (!groupedTransactions[transaction.date]) {
+                    groupedTransactions[transaction.date] = [];
+                }
+                groupedTransactions[transaction.date].push(transaction);
+            });
+            
+            // Ordenar datas (mais recente primeiro)
+            const sortedDates = Object.keys(groupedTransactions).sort((a, b) => new Date(b) - new Date(a));
+            
+            if (sortedDates.length === 0) {
+                // Mostrar estado vazio
+                transactionsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">􀉉</div>
+                        <div class="empty-text">Nenhuma transação encontrada</div>
+                        <div class="empty-subtext">Tente alterar os filtros para ver mais transações</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Criar grupos de transações
+            sortedDates.forEach(date => {
+                const transactionGroup = document.createElement('div');
+                transactionGroup.className = 'transaction-group';
+                
+                // Formatar data
+                const dateObj = new Date(date);
+                const formattedDate = dateObj.toLocaleDateString('pt-BR', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                transactionGroup.innerHTML = `
+                    <div class="transaction-group-header">
+                        ${formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)}
+                    </div>
+                `;
+                
+                const transactionsList = document.createElement('div');
+                
+                // Adicionar transações do dia
+                groupedTransactions[date].forEach(transaction => {
+                    const transactionItem = document.createElement('div');
+                    transactionItem.className = 'transaction-item';
+                    
+                    // Definir ícone e cor baseado no tipo
+                    let iconClass = '';
+                    let amountClass = '';
+                    let iconSymbol = '';
+                    
+                    switch(transaction.type) {
+                        case 'receive':
+                            iconClass = 'receive';
+                            amountClass = 'transaction-positive';
+                            iconSymbol = '↓';
+                            break;
+                        case 'send':
+                            iconClass = 'send';
+                            amountClass = 'transaction-negative';
+                            iconSymbol = '↑';
+                            break;
+                        case 'swap':
+                            iconClass = 'swap';
+                            amountClass = 'transaction-neutral';
+                            iconSymbol = '⇄';
+                            break;
+                    }
+                    
+                    transactionItem.innerHTML = `
+                        <div class="transaction-icon ${iconClass}">${iconSymbol}</div>
+                        <div class="transaction-details">
+                            <div class="transaction-type">
+                                ${transaction.type === 'receive' ? 'Recebimento' : 
+                                  transaction.type === 'send' ? 'Envio' : 'Troca'} de ${transaction.crypto}
+                            </div>
+                            <div class="transaction-meta">
+                                ${transaction.time}
+                                <div class="transaction-account">${transaction.accountName}</div>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="transaction-crypto ${amountClass}">${transaction.amount}</div>
+                            <div class="transaction-fiat">${transaction.fiat}</div>
+                        </div>
+                    `;
+                    
+                    transactionsList.appendChild(transactionItem);
+                });
+                
+                transactionGroup.appendChild(transactionsList);
+                transactionsContainer.appendChild(transactionGroup);
+            });
+        }
+
+        // Carregar página de trocar
+        function loadSwapPage() {
+            const fromAmount = document.getElementById('fromAmount');
+            const toAmount = document.getElementById('toAmount');
+            const fromCurrency = document.getElementById('fromCurrency');
+            const toCurrency = document.getElementById('toCurrency');
+            
+            // Calcular conversão inicial
+            calculateSwap();
+            
+            // Adicionar event listeners
+            fromAmount.addEventListener('input', calculateSwap);
+            fromCurrency.addEventListener('change', calculateSwap);
+            toCurrency.addEventListener('change', calculateSwap);
+            
+            // Botão de confirmação
+            document.getElementById('confirmSwap').addEventListener('click', function() {
+                const amount = parseFloat(fromAmount.value);
+                const from = fromCurrency.value;
+                const to = toCurrency.value;
+                
+                if (amount > 0) {
+                    alert(`Troca confirmada: ${amount} ${from} por ${toAmount.value} ${to}`);
+                    // Aqui iria a lógica real de troca
+                } else {
+                    alert('Por favor, insira um valor válido para trocar');
+                }
+            });
+        }
+
+        // Calcular troca
+        function calculateSwap() {
+            const fromAmount = document.getElementById('fromAmount');
+            const toAmount = document.getElementById('toAmount');
+            const fromCurrency = document.getElementById('fromCurrency');
+            const toCurrency = document.getElementById('toCurrency');
+            
+            const amount = parseFloat(fromAmount.value) || 0;
+            const from = fromCurrency.value;
+            const to = toCurrency.value;
+            
+            if (from === to) {
+                toAmount.value = amount.toFixed(2);
+                return;
+            }
+            
+            const rate = exchangeRates[from][to];
+            const convertedAmount = amount * rate;
+            
+            toAmount.value = convertedAmount.toFixed(2);
+        }
+
+        // Carregar página de configurações
+        function loadSettingsPage() {
+            // Adicionar funcionalidade aos toggles
+            document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const label = this.parentElement.querySelector('.settings-item-label').textContent;
+                    console.log(`${label}: ${this.checked ? 'Ativado' : 'Desativado'}`);
+                });
+            });
+            
+            // Adicionar funcionalidade aos itens de configuração
+            document.querySelectorAll('.settings-item').forEach(item => {
+                if (!item.querySelector('.toggle-switch')) {
+                    item.addEventListener('click', function() {
+                        const label = this.querySelector('.settings-item-label').textContent;
+                        console.log(`Configuração clicada: ${label}`);
+                        // Aqui iriam as funcionalidades reais para cada item
+                    });
+                }
+            });
+        }
+
+        // Adicionar filtros do histórico
+        document.querySelectorAll('.history-filter').forEach(filter => {
+            filter.addEventListener('click', function() {
+                const filterType = this.getAttribute('data-filter');
+                
+                // Atualizar filtros ativos
+                document.querySelectorAll('.history-filter').forEach(f => {
+                    f.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Aplicar filtro
+                currentFilter = filterType;
+                loadHistoryPage();
+            });
+        });
+
+        // Inicializar a página
+        loadBrowserPage();
+        loadHistoryPage();
+        loadSwapPage();
+        loadSettingsPage();
+    </script>
+</body>
+</html>
